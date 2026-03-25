@@ -6,22 +6,32 @@ load_dotenv()
 
 client = OpenAI()
 
-print("AI Chatbot with Memory (type 'exit' to quit)\n")
+print("AI Chatbot with Memory Control (type 'exit' to quit)\n")
 
-# Conversation history
 messages = [
-    {"role": "system", "content": "You are a helpful AI assistant."}
+    {
+        "role": "system",
+        "content": "You are an expert AI tutor. Explain concepts step-by-step like teaching a beginner. Use simple language, examples, and bullet points and make sure toeo explain within 150 tokens. Always ask if the user wants to learn more or has any questions after your explanation."
+    }
 ]
-messages = messages[-10:]
+
+MAX_MESSAGES = 10   # memory window
+
 while True:
+
     user_input = input("You: ")
 
     if user_input.lower() == "exit":
         print("Goodbye!")
         break
 
-    # add user message to history
+    # Add user message
     messages.append({"role": "user", "content": user_input})
+
+    # Keep only last N messages (IMPORTANT)
+    if len(messages) > MAX_MESSAGES:
+        system_message = messages[0]
+        messages = [system_message] + messages[-(MAX_MESSAGES-1):]
 
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -33,5 +43,5 @@ while True:
 
     print("AI:", ai_reply)
 
-    # add AI response to history
+    # Add AI response
     messages.append({"role": "assistant", "content": ai_reply})
