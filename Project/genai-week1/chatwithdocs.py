@@ -3,6 +3,14 @@ import numpy as np
 from dotenv import load_dotenv
 import os
 from pathlib import Path
+import json
+
+# Load embeddings
+with open("embeddings.json", "r") as f:
+    data = json.load(f)
+
+documents = [item["text"] for item in data]
+doc_embeddings = [item["embedding"] for item in data]
 
 # Load .env from this script's folder so running from other directories still works.
 load_dotenv(dotenv_path=Path(__file__).with_name('.env'))
